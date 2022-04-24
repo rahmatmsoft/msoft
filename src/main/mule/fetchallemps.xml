@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ffa66f19-80bc-4449-9da1-89a0b7ef9cb4" >
+		<http:listener-connection host="0.0.0.0" port="8081" readTimeout="300" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="17c54756-a29b-4200-8261-a5acd2b8d3e1" >
+		<db:oracle-connection host="localhost" user="system" password="oraclepassword" />
+	</db:config>
+	<flow name="fetchallempsFlow" doc:id="9ad454b2-bd75-488f-8237-94ca0d62445a" >
+		<http:listener doc:name="GET-AllEmps" doc:id="f8681c9d-5988-4c25-80d8-647b9bcfdc0b" config-ref="HTTP_Listener_config" path="allemps"/>
+		<logger level="INFO" doc:name="StartLog" doc:id="b9039dce-7a7f-45d7-acd1-727f4e8be61a" message='"starting of DB flow"'/>
+		<db:select doc:name="OriginDB" doc:id="b48135e3-f21d-4e1d-a5c0-90378515e2c4" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from origin_emp]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="In Json" doc:id="a1ef1fa6-94ff-43b7-a193-4d8d8e921ecf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	empid: payload01.EMP_ID default "",
+	empname: payload01.EMP_NAME default "",
+	empcity: payload01.EMP_CITY default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
