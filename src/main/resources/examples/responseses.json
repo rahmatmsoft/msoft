@@ -1,0 +1,21 @@
+
+[
+{
+"empid"   : "1",
+"empname" : "mehreen",
+"empcity" : "Hyd"
+
+},
+{
+"empid"   : "2",
+"empname" : "moin",
+"empcity" : "Hyd"
+
+},
+{
+"empid"   : "3",
+"empname" :  "arshu",
+"empcity" :  "Hyd"
+
+},
+]
